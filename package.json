@@ -1,0 +1,14 @@
+{
+  "name": "blume-blog",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "blume dev",
+    "build": "blume build",
+    "doctor": "blume doctor"
+  },
+  "dependencies": {
+    "@notionhq/client": "^5.26.0",
+    "blume": "^2.2.6"
+  }
+}
