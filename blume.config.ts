@@ -1,23 +1,21 @@
 import { defineConfig } from "blume";
-import { notion, contentful } from "blume/sources";
+import { notion } from "blume/sources";
+
+const notionDatabaseId = process.env.NOTION_DATASOURCE_ID;
+
+if (!notionDatabaseId) 
+  throw new Error("NOTION_DATASOURCE_ID environment variable is not set.");
 
 export default defineConfig({
-  title: "Utakata Blue Rose",
+  title: "Utakata Blue-Rose",
   description: "Documentation powered by Blume.",
   content: {
     sources: [
       // Pages from a Notion database. Reads NOTION_TOKEN from the environment.
       notion({
-        database: "your-database-id",
+        database: notionDatabaseId,
         prefix: "notion",
-      }),
-      // Entries of a Contentful content type. Reads CONTENTFUL_ACCESS_TOKEN
-      // from the environment.
-      contentful({
-        space: "your-space-id",
-        contentType: "doc",
-        prefix: "contentful",
-      }),
+      })
     ],
   },
 });
