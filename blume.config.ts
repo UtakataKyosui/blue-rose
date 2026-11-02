@@ -1,5 +1,5 @@
 import { defineConfig } from "blume";
-import { notion } from "blume/sources";
+import { filesystem,notion } from "blume/sources";
 
 const notionDatabaseId = process.env.NOTION_DATASOURCE_ID;
 
@@ -11,6 +11,9 @@ export default defineConfig({
   description: "Documentation powered by Blume.",
   content: {
     sources: [
+      filesystem({
+        root: "docs"
+      }),
       // Pages from a Notion database. Reads NOTION_TOKEN from the environment.
       notion({
         database: notionDatabaseId,
