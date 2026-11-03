@@ -1,0 +1,34 @@
+name: Rebuild docs from Notion
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: rebuild-notion
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Trigger the production deploy hook
+        env:
+          DEPLOY_HOOK: ${{ secrets.VERCEL_DEPLOY_HOOK }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -z "$DEPLOY_HOOK" ]]; then
+            echo "::error::Configure the VERCEL_DEPLOY_HOOK repository secret. See README.md."
+            exit 1
+          fi
+          # Discard the response: the hook URL is a secret, and can appear in errors.
+          if ! curl --silent --fail --output /dev/null --max-time 60 \
+            --request POST "$DEPLOY_HOOK"; then
+            echo "::error::Vercel deploy hook failed. Check the hook configuration and Vercel deployments."
+            exit 1
+          fi
