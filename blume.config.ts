@@ -22,7 +22,24 @@ export default defineConfig({
   deployment: {
     site: process.env.SITE_URL || "https://blume-blog.vercel.app",
   },
+  seo: {
+    og: { enabled: true },
+    rss: { enabled: true, types: ["blog"], limit: 50 },
+    sitemap: true,
+    robots: true,
+    structuredData: true,
+  },
+  agents: {
+    llmsTxt: {
+      enabled: true,
+      details:
+        "日常の気づきと、個人開発で学んだことを書き留めた個人ブログ。記事は /notion/ 配下にある。",
+    },
+    contentSignals: { search: true, aiInput: true, aiTrain: true },
+  },
   content: {
+    // Notion の行は type を持てないため、既定の type を blog にして RSS と BlogPosting の対象にする。
+    defaultType: "blog",
     sources: [
       filesystem({
         root: "docs",
