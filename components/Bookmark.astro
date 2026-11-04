@@ -1,0 +1,13 @@
+---
+import Card from "blume/components/content/Card.astro";
+
+interface Props {
+  url: string;
+  title?: string;
+}
+
+const { url, title } = Astro.props;
+const host = URL.parse(url)?.hostname ?? url;
+---
+
+<Card href={url} title={title ?? host}>{host}</Card>

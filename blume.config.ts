@@ -23,6 +23,12 @@ export default defineConfig({
   navigation: {
     sidebar: { display: "group" },
   },
+  markdown: {
+    externalLinks: true,
+    imageZoom: true,
+    headingAnchors: true,
+    code: { theme: { light: "github-light", dark: "vesper" } },
+  },
   deployment: {
     site: process.env.SITE_URL || "https://blume-blog.vercel.app",
   },

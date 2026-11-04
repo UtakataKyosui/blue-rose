@@ -53,6 +53,13 @@ test('Notion content builds with draft isolation, navigation, search, and durabl
         ] },
       };
     `);
+    await writeFile(join(dir, 'components.ts'), `
+      import { defineComponents } from 'blume';
+      export default defineComponents({
+        mdx: { Bookmark: ${JSON.stringify(join(root, 'components/Bookmark.astro'))} },
+        layout: { PageFooter: ${JSON.stringify(join(root, 'components/PageFooter.astro'))} },
+      });
+    `);
     await run(dir, ['build'], env);
     const dist = join(dir, 'dist');
     const outputFiles = await files(dist);
@@ -66,6 +73,7 @@ test('Notion content builds with draft isolation, navigation, search, and durabl
     assert.ok(outputFiles.includes(join(dist, 'notion/fallback-title/index.html')), 'Title fallback slug');
     assert.ok(!outputFiles.some(file => file.includes('draft-marker')), 'No public draft route or raw Markdown');
     const home = await readFile(join(dist, 'index.html'), 'utf8');
+    assert.ok(home.includes('トップへ戻る'), 'PageFooter override renders');
     assert.ok(home.indexOf('First fixture article') < home.indexOf('Second fixture article'), 'Order controls navigation');
     assert.ok(home.includes('/notion/guides/setup'), 'Notion page in sidebar');
     const search = await readFile(join(dist, 'blume-search.json'), 'utf8');
