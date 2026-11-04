@@ -38,4 +38,12 @@ export default defineConfig({
       }),
     ],
   },
+  navigation: {
+    tabs: [
+      {
+        label: "Blog",
+        path: "/notion",
+      }
+    ]
+  }
 });
