@@ -1,6 +1,7 @@
 import { defineConfig } from "blume";
 import { orama } from "blume/search";
 import { filesystem, notion } from "blume/sources";
+import { createNotionClient } from "./notion-client";
 
 // Blume loads .env.local before evaluating this file. Keep the old variable as
 // an alias so existing deployments continue working; both must be database IDs.
@@ -55,6 +56,8 @@ export default defineConfig({
         publishedValue: process.env.NOTION_PUBLISHED_VALUE || "Done",
         // Dev only; production updates are picked up by the rebuild workflow.
         pollInterval: 60,
+        // bookmark / embed を YouTube は動画、それ以外はリンクとして取り込む。
+        client: createNotionClient(),
       }),
     ],
   },
