@@ -19,6 +19,9 @@ export default defineConfig({
   description: "日常の気づきと、ものづくりの記録。",
   search: orama(),
   theme: { accent: "blue" },
+  navigation: {
+    sidebar: { display: "group" },
+  },
   deployment: {
     site: process.env.SITE_URL || "https://blume-blog.vercel.app",
   },
