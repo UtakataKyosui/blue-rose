@@ -36,12 +36,11 @@ test('Notion content builds with draft isolation, navigation, search, and durabl
     // Use the real site config and real Notion renderer, replacing only the API
     // client and media transport. No test switch exists in production config.
     await writeFile(join(dir, 'blume.config.ts'), `
-      import config from ${JSON.stringify(join(root, 'blume.config.ts'))};
+      import config, { notionOptions } from ${JSON.stringify(join(root, 'blume.config.ts'))};
       import { custom, filesystem } from 'blume/sources';
       import { notionSource } from 'blume/sources/notion.ts';
       import { client, fetchImpl } from ${JSON.stringify(join(root, 'tests/notion-fixture.mjs'))};
-      const source = config.content.sources.find(source => source.kind === 'notion');
-      if (source.options.prefix !== 'notion' || source.options.publishedValue !== 'Done') {
+      if (notionOptions.prefix !== 'notion' || notionOptions.publishedValue !== 'Done') {
         throw new Error('Unexpected Notion publication settings');
       }
       export default {
@@ -49,7 +48,7 @@ test('Notion content builds with draft isolation, navigation, search, and durabl
         seo: { og: { enabled: false } },
         content: { sources: [
           filesystem({ root: ${JSON.stringify(join(root, 'docs'))} }),
-          custom(notionSource({ ...source.options, name: 'notion', client, fetchImpl })),
+          custom(notionSource({ ...notionOptions, name: 'notion', client, fetchImpl })),
         ] },
       };
     `);

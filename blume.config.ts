@@ -1,6 +1,7 @@
 import { defineConfig } from "blume";
 import { orama } from "blume/search";
-import { filesystem, notion } from "blume/sources";
+import { custom, filesystem } from "blume/sources";
+import { notionSource } from "blume/sources/notion.ts";
 import { createNotionClient } from "./notion-client";
 
 // Blume loads .env.local before evaluating this file. Keep the old variable as
@@ -14,6 +15,16 @@ if (!notionDatabaseId) {
     "Set NOTION_DATABASE_ID to the database ID (not a data source or view ID). See README.md.",
   );
 }
+
+// Pages from a Notion database. Reads NOTION_TOKEN from the environment.
+// notion() は client を受け付けないため、bookmark / embed を YouTube は動画、
+// それ以外はリンクとして取り込むラッパーを notionSource に渡す。
+export const notionOptions = {
+  database: notionDatabaseId,
+  prefix: "notion",
+  // Match Notion's default statuses. Other nonempty statuses are drafts.
+  publishedValue: process.env.NOTION_PUBLISHED_VALUE || "Done",
+};
 
 export default defineConfig({
   title: "Utakata Blue-Rose",
@@ -65,16 +76,7 @@ export default defineConfig({
         root: "docs",
       }),
       // Pages from a Notion database. Reads NOTION_TOKEN from the environment.
-      notion({
-        database: notionDatabaseId,
-        prefix: "notion",
-        // Match Notion's default statuses. Other nonempty statuses are drafts.
-        publishedValue: process.env.NOTION_PUBLISHED_VALUE || "Done",
-        // Dev only; production updates are picked up by the rebuild workflow.
-        pollInterval: 60,
-        // bookmark / embed を YouTube は動画、それ以外はリンクとして取り込む。
-        client: createNotionClient(),
-      }),
+      custom(notionSource({ ...notionOptions, name: "notion", client: createNotionClient() })),
     ],
   },
 });
