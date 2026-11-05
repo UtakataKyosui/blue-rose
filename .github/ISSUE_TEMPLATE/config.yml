@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: セキュリティ上の問題の報告
+    url: https://github.com/UtakataKyosui/blue-rose/security/advisories/new
+    about: 脆弱性や認証情報の漏えいは、公開 Issue ではなくこちらから非公開で報告してください。
