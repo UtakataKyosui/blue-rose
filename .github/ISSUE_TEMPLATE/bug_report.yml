@@ -1,0 +1,57 @@
+name: バグ報告
+description: 表示・ビルド・Notion 連携などの不具合を報告する
+title: "bug: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Notion のトークンやデータベース ID などの認証情報は、ログやスクリーンショットに含めないでください。
+  - type: textarea
+    id: summary
+    attributes:
+      label: 概要
+      description: 何が起きているかを簡潔に書いてください。
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 再現手順
+      placeholder: |
+        1. `pnpm dev` を起動する
+        2. 〇〇のページを開く
+        3. ……
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期待する動作
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: 実際の動作
+      description: エラーメッセージやスクリーンショットがあれば貼ってください。
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: 発生箇所
+      options:
+        - 表示・スタイル
+        - Notion 連携・記事の取り込み
+        - ビルド・デプロイ
+        - 検索・ナビゲーション
+        - その他
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: 環境
+      description: ブラウザ、OS、Node.js のバージョンなど。
+      placeholder: Chrome 130 / macOS / Node.js 22.19
