@@ -33,7 +33,17 @@ export default defineConfig({
     site: process.env.SITE_URL || "https://blume-blog.vercel.app",
   },
   seo: {
-    og: { enabled: true },
+    og: {
+      enabled: true,
+      palette: {
+        background: "#0b0f1a",
+        foreground: "#e8ecf4",
+        muted: "#8b95ab",
+        border: "#1f2740",
+        accent: "oklch(0.72 0.14 250)",
+      },
+      fonts: [{ name: "Noto Sans JP", weight: [400, 700] }],
+    },
     rss: { enabled: true, types: ["blog"], limit: 50 },
     sitemap: true,
     robots: true,
