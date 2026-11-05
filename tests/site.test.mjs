@@ -36,12 +36,11 @@ test('Notion content builds with draft isolation, navigation, search, and durabl
     // Use the real site config and real Notion renderer, replacing only the API
     // client and media transport. No test switch exists in production config.
     await writeFile(join(dir, 'blume.config.ts'), `
-      import config from ${JSON.stringify(join(root, 'blume.config.ts'))};
+      import config, { notionOptions } from ${JSON.stringify(join(root, 'blume.config.ts'))};
       import { custom, filesystem } from 'blume/sources';
       import { notionSource } from 'blume/sources/notion.ts';
       import { client, fetchImpl } from ${JSON.stringify(join(root, 'tests/notion-fixture.mjs'))};
-      const source = config.content.sources.find(source => source.kind === 'notion');
-      if (source.options.prefix !== 'notion' || source.options.publishedValue !== 'Done') {
+      if (notionOptions.prefix !== 'notion' || notionOptions.publishedValue !== 'Done') {
         throw new Error('Unexpected Notion publication settings');
       }
       export default {
@@ -49,9 +48,16 @@ test('Notion content builds with draft isolation, navigation, search, and durabl
         seo: { og: { enabled: false } },
         content: { sources: [
           filesystem({ root: ${JSON.stringify(join(root, 'docs'))} }),
-          custom(notionSource({ ...source.options, name: 'notion', client, fetchImpl })),
+          custom(notionSource({ ...notionOptions, name: 'notion', client, fetchImpl })),
         ] },
       };
+    `);
+    await writeFile(join(dir, 'components.ts'), `
+      import { defineComponents } from 'blume';
+      export default defineComponents({
+        mdx: { Bookmark: ${JSON.stringify(join(root, 'components/Bookmark.astro'))} },
+        layout: { PageFooter: ${JSON.stringify(join(root, 'components/PageFooter.astro'))} },
+      });
     `);
     await run(dir, ['build'], env);
     const dist = join(dir, 'dist');
@@ -66,6 +72,7 @@ test('Notion content builds with draft isolation, navigation, search, and durabl
     assert.ok(outputFiles.includes(join(dist, 'notion/fallback-title/index.html')), 'Title fallback slug');
     assert.ok(!outputFiles.some(file => file.includes('draft-marker')), 'No public draft route or raw Markdown');
     const home = await readFile(join(dist, 'index.html'), 'utf8');
+    assert.ok(home.includes('トップへ戻る'), 'PageFooter override renders');
     assert.ok(home.indexOf('First fixture article') < home.indexOf('Second fixture article'), 'Order controls navigation');
     assert.ok(home.includes('/notion/guides/setup'), 'Notion page in sidebar');
     const search = await readFile(join(dist, 'blume-search.json'), 'utf8');

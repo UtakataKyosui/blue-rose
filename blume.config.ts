@@ -1,6 +1,8 @@
 import { defineConfig } from "blume";
 import { orama } from "blume/search";
-import { filesystem, notion } from "blume/sources";
+import { custom, filesystem } from "blume/sources";
+import { notionSource } from "blume/sources/notion.ts";
+import { createNotionClient } from "./notion-client";
 
 // Blume loads .env.local before evaluating this file. Keep the old variable as
 // an alias so existing deployments continue working; both must be database IDs.
@@ -14,6 +16,16 @@ if (!notionDatabaseId) {
   );
 }
 
+// Pages from a Notion database. Reads NOTION_TOKEN from the environment.
+// notion() は client を受け付けないため、bookmark / embed を YouTube は動画、
+// それ以外はリンクとして取り込むラッパーを notionSource に渡す。
+export const notionOptions = {
+  database: notionDatabaseId,
+  prefix: "notion",
+  // Match Notion's default statuses. Other nonempty statuses are drafts.
+  publishedValue: process.env.NOTION_PUBLISHED_VALUE || "Done",
+};
+
 export default defineConfig({
   title: "Utakata Blue-Rose",
   description: "日常の気づきと、ものづくりの記録。",
@@ -22,11 +34,27 @@ export default defineConfig({
   navigation: {
     sidebar: { display: "group" },
   },
+  markdown: {
+    externalLinks: true,
+    imageZoom: true,
+    headingAnchors: true,
+    code: { theme: { light: "github-light", dark: "vesper" } },
+  },
   deployment: {
     site: process.env.SITE_URL || "https://blume-blog.vercel.app",
   },
   seo: {
-    og: { enabled: true },
+    og: {
+      enabled: true,
+      palette: {
+        background: "#0b0f1a",
+        foreground: "#e8ecf4",
+        muted: "#8b95ab",
+        border: "#1f2740",
+        accent: "oklch(0.72 0.14 250)",
+      },
+      fonts: [{ name: "Noto Sans JP", weight: [400, 700] }],
+    },
     rss: { enabled: true, types: ["blog"], limit: 50 },
     sitemap: true,
     robots: true,
@@ -48,14 +76,7 @@ export default defineConfig({
         root: "docs",
       }),
       // Pages from a Notion database. Reads NOTION_TOKEN from the environment.
-      notion({
-        database: notionDatabaseId,
-        prefix: "notion",
-        // Match Notion's default statuses. Other nonempty statuses are drafts.
-        publishedValue: process.env.NOTION_PUBLISHED_VALUE || "Done",
-        // Dev only; production updates are picked up by the rebuild workflow.
-        pollInterval: 60,
-      }),
+      custom(notionSource({ ...notionOptions, name: "notion", client: createNotionClient() })),
     ],
   },
 });
