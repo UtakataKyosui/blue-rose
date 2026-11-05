@@ -9,7 +9,7 @@ body::before {
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: url("/blue-rose.webp") right -3rem bottom 1rem / clamp(24rem, 62vw, 52rem) no-repeat;
+  background: url("/blue-rose.webp") center center / clamp(24rem, 62vw, 52rem) no-repeat;
   opacity: 0.12;
 }
 
@@ -19,7 +19,7 @@ body::before {
 
 @media (max-width: 640px) {
   body::before {
-    background-position: right -3rem bottom 1rem;
+    background-position: center center;
     background-size: 22rem;
     opacity: 0.09;
   }
