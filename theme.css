@@ -1,0 +1,30 @@
+/* Keep the watermark in its own layer beneath the page content. */
+body {
+  isolation: isolate;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: url("/blue-rose.webp") right -3rem bottom 1rem / clamp(24rem, 62vw, 52rem) no-repeat;
+  opacity: 0.12;
+}
+
+:root[data-theme="dark"] body::before {
+  opacity: 0.18;
+}
+
+@media (max-width: 640px) {
+  body::before {
+    background-position: right -3rem bottom 1rem;
+    background-size: 22rem;
+    opacity: 0.09;
+  }
+
+  :root[data-theme="dark"] body::before {
+    opacity: 0.13;
+  }
+}
